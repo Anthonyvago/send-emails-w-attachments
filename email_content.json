@@ -1,0 +1,7 @@
+{
+    "subject": "Factuur {invoice_number}",
+    "greeting": "Goedendag",
+    "body": "Bijgaand ontvangt u uw factuur van de geleverde diensten / goederen.\n\nVoor vragen kunt u contact opnemen met: [phone_number] of email naar [company_email].",
+    "signature": "Met vriendelijke groet,\n\n[company_name]",
+    "send_to_myself": true
+}

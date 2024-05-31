@@ -1,0 +1,15 @@
+// ! IMPORTANT: everything between brackets ('[ ]') YOU must insert your own text!
+// ! IMPORTANT: everything between CURLY brackets ('{ }') is inserted automatically when reading this file.
+
+Good day,
+
+This is a reminder that the payment term for invoice number {invoice_number} has expired.
+According to our records, we have not yet received payment from you for the delivered services/products.
+
+We understand that sometimes payments can be overlooked, and we kindly request that you make the payment as soon as possible.
+We would like to remind you that the payment term is 14 days and we strive to maintain a smooth and pleasant relationship with our customers.
+
+For questions, you can contact us at: [phone_number] or email [company_email].
+
+Kind regards,
+[company_name]

@@ -1,0 +1,7 @@
+{
+    "invoices_directory_name": "../invoices",
+    "smtp-server": "<smpt_server>",
+    "port": 587,
+    "emailaddress": "<email_address>",
+    "password": "<password>"
+}

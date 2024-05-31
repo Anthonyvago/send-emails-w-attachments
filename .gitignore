@@ -1,3 +1,11 @@
+
+build
+build/
+*.pdf
+*.svg
+*.json
+.cache
+
 # Prerequisites
 *.d
 
@@ -30,3 +38,6 @@
 *.exe
 *.out
 *.app
+
+*.svg
+*.json
