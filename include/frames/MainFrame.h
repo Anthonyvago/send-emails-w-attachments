@@ -4,8 +4,6 @@
 #include <wx/notebook.h>
 
 #include "AbstractFrame.h"
-#include "ProgramConfigurationHandler.h"
-
 #include "NotebookAdapter.h"
 
 #include "panels/MainPanel.h"

@@ -1,33 +1,35 @@
-#ifndef PROGRAM_CONFIGURATION_HANDLER_H
-#define PROGRAM_CONFIGURATION_HANDLER_H
+#ifndef JSON_PARSER_H
+#define JSON_PARSER_H
 
 #include <string>
 
 /**
  * @brief The ProgramConfiguration struct
- * 
+ *
  */
 typedef struct
 {
+    std::string companyName;
+    std::string companyEmail;
+    std::string companyPhone;
     std::string invoicesDirectoryName;
-    std::string smtpServer;
-    uint16_t port;
-    std::string email;
-    std::string password;
+    std::string invoicesFileExtension;
+    bool sendToSelf;
+    std::string newInvoiceSubject;
+    std::string reminderSubject;
 } ProgramConfiguration;
 
 /**
- * @brief The EmailConfiguration struct
- * 
+ * @brief The EmailCredentials struct
+ *
  */
 typedef struct
 {
-    std::string subject;
-    std::string greeting;
-    std::string body;
-    std::string signature;
-    bool sendToSelf;
-} EmailConfiguration;
+    std::string smtpServer;
+    uint16_t port;
+    std::string username;
+    std::string password;
+} EmailCredentials;
 
 /**
  * @class LoginCredentialHandler
@@ -37,41 +39,46 @@ typedef struct
  * used by the application. It provides methods to read the login credentials from a
  * configuration file.
  */
-class ProgramConfigurationHandler
+class JsonParser
 {
 
 public:
     /**
     @brief Default constructor.
      */
-    ProgramConfigurationHandler();
+    JsonParser();
 
     /**
     @brief Default destructor.
      */
-    ~ProgramConfigurationHandler() = default;
+    ~JsonParser() = default;
 
     /**
      * @brief Reads the project configuration from a configuration file.
-     * 
+     *
      * @return ProgramConfiguration*
      */
-    ProgramConfiguration* readProjectConfigFile();
+    ProgramConfiguration *readProjectConfigFile();
 
     /**
      * @brief Reads the email configuration from a configuration file.
-     * 
-     * @return EmailConfiguration* 
+     *
+     * @return EmailConfiguration*
      */
-    EmailConfiguration* readEmailConfigFile();
+    EmailCredentials *readEmailCredentialsConfig();
 
+    /**
+     * @brief Get the Error Message object
+     * 
+     * @return std::string 
+     */
     std::string getErrorMessage() const;
 
 private:
     ProgramConfiguration m_programConfig; /**< The login credentials object. */
-    EmailConfiguration m_emailConfig; /**< The email configuration object. */
+    EmailCredentials m_emailConfig;       /**< The email configuration object. */
 
     std::string m_errorMessage = ""; /**< The error message. */
 };
 
-#endif // LOGIN_CREDENTIALS_HANDLER_H
+#endif // JSON_PARSER_H

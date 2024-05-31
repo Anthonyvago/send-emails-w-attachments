@@ -2,9 +2,44 @@
 #define CONSTANTS_H
 
 #include <wx/wx.h>
+#include <array>
 
 namespace Constants
 {
+    namespace EmailContentFiles
+    {
+        const static std::string NEW_INVOICE = "../emails/new_invoice.txt";
+        const static std::string REMINDER = "../emails/reminder.txt";
+    } // namespace EmailContentFiles
+
+    namespace TextFilePlaceholders
+    {
+        const static uint8_t NR_OF_PLACEHOLDERS = 4;
+        const static std::string INVOICE_NR = "invoice_number";
+        const static std::string COMPANY_NAME = "company_name";
+        const static std::string COMPANY_EMAIL = "company_email";
+        const static std::string COMPANY_PHONE = "company_phone";
+    } // namespace TextFilePlaceholders
+
+    namespace JsonKeys
+    {
+        // project_configuration.json:
+        const static std::string COMPANY_NAME = "company_name";
+        const static std::string COMPANY_EMAIL = "company_email_address";
+        const static std::string COMPANY_PHONE = "company_phone_number";
+        const static std::string INVOICES_DIR_PATH = "invoices_directory_name";
+        const static std::string INVOICE_FILE_EXT = "invoices_file_extension";
+        const static std::string SEND_TO_SELF = "send_emails_to_myself";
+        const static std::string NEW_INVOICE_SUBJECT = "new_invoices_email_subject";
+        const static std::string REMINDER_SUBJECT = "reminder_email_subject";
+
+        // smtp_server_config.json:
+        const static std::string SMTP_SERVER = "smtp_server";
+        const static std::string PORT = "port";
+        const static std::string USERNAME = "username";
+        const static std::string PASSWORD = "password";
+    } // namespace JsonKeys
+
     namespace PanelIndexes
     {
         const static int MAIN = 0;
@@ -29,14 +64,14 @@ namespace Constants
             const static std::string TITLE = "Selecteer een optie:";
             const static std::string BTN_TEXT_SEND_INVOICES = "Verstuur facturen";
             const static std::string BTN_TEXT_SEND_REMINDERS = "Verstuur herinneringen";
-        } // namespace Main
+        } // namespace MainPanel
 
         namespace SendInvoicesPanel
         {
             const static std::string TITLE = "Geef de e-mailadressen op (lege velden worden genegeerd):";
             const static std::string BTN_TEXT_SEND_INVOICES = "Verstuur facturen";
 
-        } // namespace SendInvoices
+        } // namespace SendInvoicesPanel
 
         namespace StatusPanel
         {
@@ -54,14 +89,14 @@ namespace Constants
 
             namespace Colors
             {
-                const static wxColour IGNORING = wxColour(170, 170, 170);   // light grey
-                const static wxColour PENDING = wxColour(6, 57, 112);       // same as accent color
-                const static wxColour SENDING = wxColour(255, 165, 0);      // orange
-                const static wxColour SENT = wxColour(0, 128, 0);           // green
-                const static wxColour ERROR = wxColour(220, 20, 60);        // red
-                const static wxColour ERROR_INPUT = wxColour(220, 20, 60);  // red
-            }
-        } // namespace Status
+                const static wxColour IGNORING = wxColour(170, 170, 170);  // light grey
+                const static wxColour PENDING = wxColour(6, 57, 112);      // same as accent color
+                const static wxColour SENDING = wxColour(255, 165, 0);     // orange
+                const static wxColour SENT = wxColour(0, 128, 0);          // green
+                const static wxColour ERROR = wxColour(220, 20, 60);       // red
+                const static wxColour ERROR_INPUT = wxColour(220, 20, 60); // red
+            } // namespace Colors
+        } // namespace StatusPanel
 
         namespace Size
         {
@@ -69,13 +104,13 @@ namespace Constants
             const static int DEFAULT_HEIGHT_PERCENTAGE = 30; // percentage
         } // namespace Size
 
-    } // namespace Windows
+    } // namespace Panels
 
     namespace Configuration
     {
         const static std::string PROJECT_CONFIG_FILE_PATH = "../project_configuration.json";
-        const static std::string EMAIL_CONFIG_FILE_PATH = "../email_content.json";
-    } // namespace Login
+        const static std::string SMTP_CONFIG_FILE_PATH = "../smtp_server_config.json";
+    } // namespace Configuration
 
     namespace OutputStd
     {

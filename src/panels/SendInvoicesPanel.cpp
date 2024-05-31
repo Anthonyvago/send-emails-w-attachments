@@ -58,7 +58,7 @@ void SendInvoicesPanel::onShow(wxShowEvent &event)
             textField->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
             horizontalSizer->Add(textField, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 10);
             
-            m_invoiceLine.push_back(std::make_pair(staticText, textField));
+            m_invoiceLines.push_back(std::make_pair(staticText, textField));
 
             // Bind TAB key to move to the next text field:
             textField->Bind(wxEVT_CHAR, &SendInvoicesPanel::onTextFieldChar, this);
@@ -92,17 +92,17 @@ void SendInvoicesPanel::onTextFieldChar(wxKeyEvent &event)
     // Move to the next text field when the TAB key is pressed:
     if (event.GetKeyCode() == WXK_TAB && event.ShiftDown() == false)
     {
-        for (size_t i = 0; i < m_invoiceLine.size(); i++)
+        for (size_t i = 0; i < m_invoiceLines.size(); i++)
         {
-            if (m_invoiceLine[i].second->HasFocus())
+            if (m_invoiceLines[i].second->HasFocus())
             {
-                if (i == m_invoiceLine.size() - 1)
+                if (i == m_invoiceLines.size() - 1)
                 {
-                    m_invoiceLine[0].second->SetFocus();
+                    m_invoiceLines[0].second->SetFocus();
                 }
                 else
                 {
-                    m_invoiceLine[i + 1].second->SetFocus();
+                    m_invoiceLines[i + 1].second->SetFocus();
                 }
                 break;
             }
@@ -110,17 +110,17 @@ void SendInvoicesPanel::onTextFieldChar(wxKeyEvent &event)
     }
     else if (event.GetKeyCode() == WXK_TAB && event.ShiftDown() == true)
     {
-        for (size_t i = 0; i < m_invoiceLine.size(); i++)
+        for (size_t i = 0; i < m_invoiceLines.size(); i++)
         {
-            if (m_invoiceLine[i].second->HasFocus())
+            if (m_invoiceLines[i].second->HasFocus())
             {
                 if (i == 0)
                 {
-                    m_invoiceLine[m_invoiceLine.size() - 1].second->SetFocus();
+                    m_invoiceLines[m_invoiceLines.size() - 1].second->SetFocus();
                 }
                 else
                 {
-                    m_invoiceLine[i - 1].second->SetFocus();
+                    m_invoiceLines[i - 1].second->SetFocus();
                 }
                 break;
             }
@@ -135,6 +135,6 @@ void SendInvoicesPanel::onTextFieldChar(wxKeyEvent &event)
 
 void SendInvoicesPanel::onSendInvoices(wxCommandEvent &event)
 {
-    m_notebookAdapter->showStatusPanel(m_invoiceLine);
+    m_notebookAdapter->showStatusPanel(m_invoiceLines);
     event.Skip();
 }

@@ -69,7 +69,7 @@ private:
     // NotebookAdapter instance (parent):
     NotebookAdapter *m_notebookAdapter;
 
-    ProgramConfigurationHandler m_programConfigHandler;
+    JsonParser m_jsonParser;
 
     EmailThread *m_emailThread;
 

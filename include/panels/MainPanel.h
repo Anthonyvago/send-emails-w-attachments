@@ -23,7 +23,7 @@ private:
     void onSendInvoices(wxCommandEvent &event);
     void onSendReminders(wxCommandEvent &event);
 
-    bool findPdfFiles(const std::string &p_dirName, std::vector<std::string> &p_pdfFiles) const;
+    bool getInvoiceFiles(std::vector<std::string> &p_pdfFiles) const;
 
     // Notebook to hold the panels:
     NotebookAdapter *m_notebook;

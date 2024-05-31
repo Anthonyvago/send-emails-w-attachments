@@ -1,0 +1,8 @@
+Goedendag,
+
+Bijgaand ontvangt u uw factuur van de geleverde diensten / goederen.
+
+Voor vragen kunt u contact opnemen met: {company_phone} of email naar {company_email}.
+
+Met vriendelijke groet,
+{company_name}

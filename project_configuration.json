@@ -1,7 +1,10 @@
 {
+    "company_name": "Company Name Test",
+    "company_email_address": "Company Email Address Test",
+    "company_phone_number": "Company Phone Number Test",
     "invoices_directory_name": "../invoices",
-    "smtp-server": "<smpt_server>",
-    "port": 587,
-    "emailaddress": "<email_address>",
-    "password": "<password>"
+    "invoices_file_extension": ".pdf",
+    "send_emails_to_myself": true,
+    "new_invoices_email_subject": "Factuur {invoice_number}",
+    "reminder_email_subject": "Herinnering Factuur {invoice_number}"
 }

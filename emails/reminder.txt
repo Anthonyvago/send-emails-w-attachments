@@ -1,0 +1,12 @@
+Goedendag,
+
+Hierbij een herinnering dat de betalingstermijn voor factuurnummer {invoice_number} is verstreken.
+Volgens onze administratie hebben we nog geen betaling van u ontvangen voor de geleverde diensten/producten.
+
+We begrijpen dat het soms kan voorkomen dat betalingen over het hoofd worden gezien, en we willen je vriendelijk verzoeken om de betaling zo spoedig mogelijk te voldoen.
+Hierbij willen we je eraan herinneren dat de betalingstermijn 14 dagen bedraagt en we streven ernaar om een soepele en vlotte relatie met onze klanten te behouden.
+
+Voor vragen kunt u contact opnemen met: {company_phone} of email naar {company_email}.
+
+Met vriendelijke groet,
+{company_name}

@@ -58,15 +58,22 @@ MainPanel::MainPanel(ProgramConfiguration *p_programConfig,
 // Event handler for the button to send invoices
 void MainPanel::onSendInvoices(wxCommandEvent &event)
 {
-    std::string invoicesDir = m_programConfig.invoicesDirectoryName;
-    if (invoicesDir.empty())
+    // First, check if the invoices directory is set in the configuration file:
+    if (m_programConfig.invoicesDirectoryName.empty())
     {
         wxMessageBox(wxT("Invoices directory is not set; Check configuration file!"), wxT("Error"), wxOK | wxICON_ERROR);
         return;
     }
 
-    std::vector<std::string> pdfList;
-    bool result = findPdfFiles(invoicesDir, pdfList);
+    // Secondly, check if the extension of the invoice files is set in the configuration file:
+    if (m_programConfig.invoicesFileExtension.empty())
+    {
+        wxMessageBox(wxT("Invoice file extension is not set; Check configuration file!"), wxT("Error"), wxOK | wxICON_ERROR);
+        return;
+    }
+
+    std::vector<std::string> invoicesList;
+    bool result = getInvoiceFiles(invoicesList);
 
     // If pdf files could not be found or an error occurred:
     if (!result)
@@ -75,7 +82,7 @@ void MainPanel::onSendInvoices(wxCommandEvent &event)
     }
 
     // Show the SendInvoicesPanel
-    m_notebook->showInvoicesPanel(pdfList);
+    m_notebook->showInvoicesPanel(invoicesList);
     event.Skip();
 }
 
@@ -90,7 +97,7 @@ void MainPanel::onSendReminders(wxCommandEvent &event)
     }
 
     std::vector<std::string> pdfList;
-    bool result = findPdfFiles(invoicesDir, pdfList);
+    bool result = getInvoiceFiles(pdfList);
     if (!result)
     {
         return;
@@ -102,6 +109,8 @@ void MainPanel::onSendReminders(wxCommandEvent &event)
 
 bool naturalOrderComparator(const std::string &a, const std::string &b)
 {
+    // Regular expression to split non-digit and digit parts
+
     std::regex re("(\\D+)(\\d*)"); // Regular expression to split non-digit and digit parts
     std::smatch matchA, matchB;
     std::string strA = a, strB = b;
@@ -122,13 +131,13 @@ bool naturalOrderComparator(const std::string &a, const std::string &b)
     return a < b; // Fallback to default comparison
 }
 
-bool MainPanel::findPdfFiles(const std::string &p_dirName, std::vector<std::string> &p_pdfFiles) const
+bool MainPanel::getInvoiceFiles(std::vector<std::string> &p_pdfFiles) const
 {
     try
     {
-        for (const auto &entry : std::filesystem::directory_iterator(p_dirName))
+        for (const auto &entry : std::filesystem::directory_iterator(m_programConfig.invoicesDirectoryName))
         {
-            if (entry.is_regular_file() && entry.path().extension() == ".pdf")
+            if (entry.is_regular_file() && entry.path().extension() == m_programConfig.invoicesFileExtension)
             {
                 p_pdfFiles.push_back(entry.path().filename().string());
             }
@@ -144,7 +153,8 @@ bool MainPanel::findPdfFiles(const std::string &p_dirName, std::vector<std::stri
     // Check if pdf files were found:
     if (p_pdfFiles.empty())
     {
-        wxMessageBox(wxT("No PDF files found in the invoices directory!"), wxT("Error"), wxOK | wxICON_ERROR);
+        std::string error = "No invoices found in the directory: " + m_programConfig.invoicesDirectoryName + " with extension: " + m_programConfig.invoicesFileExtension;
+        wxMessageBox(wxString(error), wxT("Error"), wxOK | wxICON_ERROR);
         return false;
     }
 

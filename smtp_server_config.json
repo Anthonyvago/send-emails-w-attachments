@@ -1,0 +1,6 @@
+{
+    "smtp_server": "<your_smtp_server>",
+    "port": 587,
+    "username": "<your_email>@<your_domain>.com",
+    "password": "<your_password>"
+}

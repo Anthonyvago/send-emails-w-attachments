@@ -28,7 +28,7 @@ private:
     // Event handler for the text fields:
     void onTextFieldChar(wxKeyEvent &event);
 
-    std::vector<std::pair<wxStaticText *, wxTextCtrl *>> m_invoiceLine;
+    std::vector<std::pair<wxStaticText *, wxTextCtrl *>> m_invoiceLines;
 
     // NotebookAdapter instance (parent):
     NotebookAdapter *m_notebookAdapter;

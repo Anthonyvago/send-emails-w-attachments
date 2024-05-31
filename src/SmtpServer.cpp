@@ -5,12 +5,12 @@
 
 using namespace jed_utils::cpp;
 
-SmtpServer::SmtpServer(ProgramConfiguration *p_emailServerConfig)
-    : m_emailServerConfig(p_emailServerConfig),
+SmtpServer::SmtpServer(EmailCredentials *p_emailCreds)
+    : m_emailCreds(p_emailCreds),
       m_errorMessage(""),
-      m_smtpClient(m_emailServerConfig->smtpServer, m_emailServerConfig->port)
+      m_smtpClient(p_emailCreds->smtpServer, p_emailCreds->port)
 {
-    m_smtpClient.setCredentials(Credential(m_emailServerConfig->email, m_emailServerConfig->password));
+    m_smtpClient.setCredentials(Credential(p_emailCreds->username, p_emailCreds->password));
 }
 
 bool SmtpServer::sendPlaintextEmail(const PlaintextMessage &msg)

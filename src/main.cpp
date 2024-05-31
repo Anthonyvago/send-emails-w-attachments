@@ -1,10 +1,9 @@
 #include <wx/wx.h>
-#include <memory>
 
 #include "Constants.h"
 #include "frames/MainFrame.h"
 #include "frames/ErrorFrame.h"
-#include "ProgramConfigurationHandler.h"
+#include "JsonParser.h"
 
 int getWidth()
 {
@@ -26,15 +25,15 @@ public:
     virtual bool OnInit() override
     {
         // Retrieve the login credentials from the configuration file:
-        ProgramConfigurationHandler loginCredentialHandler;
+        JsonParser jsonParser;
 
         // Read login credentials from the config file
-        ProgramConfiguration *programConfig = loginCredentialHandler.readProjectConfigFile();
+        ProgramConfiguration *programConfig = jsonParser.readProjectConfigFile();
         // Check if credentials were successfully read
         if (programConfig == nullptr)
         {
             // Display error frame:
-            m_errorFrame = new ErrorFrame(nullptr, wxID_ANY, loginCredentialHandler.getErrorMessage());
+            m_errorFrame = new ErrorFrame(nullptr, wxID_ANY, jsonParser.getErrorMessage());
             m_errorFrame->Show();
             return true;
         }

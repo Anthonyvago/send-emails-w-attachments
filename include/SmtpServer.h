@@ -4,13 +4,14 @@
 #include <iostream>
 #include <string>
 
+#include "JsonParser.h"
+
 // SMTP client library
 #include <cpp/opportunisticsecuresmtpclient.hpp>
 #include <cpp/plaintextmessage.hpp>
 
-#include "ProgramConfigurationHandler.h"
-
 using namespace jed_utils::cpp;
+
 
 /**
  * @class SmtpServer
@@ -21,9 +22,9 @@ class SmtpServer
 public:
     /**
      * @brief Constructs a SmtpServer object.
-     * @param p_emailServerConfig Email server configuration
+     * @param p_emailCreds Email server configuration.
      */
-    SmtpServer(ProgramConfiguration *p_emailServerConfig);
+    SmtpServer(EmailCredentials *p_emailCreds);
 
     /**
      * @brief Default destructor.
@@ -46,7 +47,7 @@ public:
     std::string getErrorMessage() const;
 
 private:
-    ProgramConfiguration *m_emailServerConfig = nullptr; /**< Email server configuration. */
+    EmailCredentials *m_emailCreds = nullptr; /**< Email server configuration. */
 
     std::string m_errorMessage; /**< The error message. */
 

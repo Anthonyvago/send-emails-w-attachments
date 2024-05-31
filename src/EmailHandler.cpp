@@ -1,11 +1,15 @@
 #include "EmailHandler.h"
 
-#include <regex>
+#include "Constants.h"
 
-EmailHandler::EmailHandler(ProgramConfiguration *p_emailServerConfig, EmailConfiguration *p_emailContentConfig)
-    : m_emailServerConfig(p_emailServerConfig),
-      m_emailContentConfig(p_emailContentConfig),
-      m_smtpServer(p_emailServerConfig)
+#include <regex>
+#include <fstream>
+#include <sstream>
+
+EmailHandler::EmailHandler(ProgramConfiguration *p_programConfig, EmailCredentials *p_emailCreds)
+    : m_programConfig(p_programConfig),
+      m_emailCredentials(p_emailCreds),
+      m_smtpServer(p_emailCreds)
 {
 }
 
@@ -14,43 +18,96 @@ bool EmailHandler::sendEmail(const PlaintextMessage &p_emailMessage)
   return m_smtpServer.sendPlaintextEmail(p_emailMessage);
 }
 
-PlaintextMessage EmailHandler::constructEmailMessage(const std::string &p_recipient, const std::string &p_attachmentFileName) const
+bool EmailHandler::readEmailContent(enum EmailType p_emailType,
+                                    std::string &p_inputStr) const
 {
-  // Sender email address:
-  MessageAddress senderEmailAddress(m_emailServerConfig->email);
+  std::string filePath = p_emailType == NEW_INVOICE ? Constants::EmailContentFiles::NEW_INVOICE : Constants::EmailContentFiles::REMINDER;
 
-  // Vector of recipients:
-  std::vector<MessageAddress> recipients = {MessageAddress(p_recipient)};
+  // Open the file:
+  std::ifstream emailFile(filePath);
 
-  // Invoice number is extracted from the attachment file name:
-  std::string invoiceNumber = extractInvoiceNumber(p_attachmentFileName);
-
-  // Subject:
-  std::string subject = m_emailContentConfig->subject;
-  checkAndReplacePlaceholder(subject, "{invoice_number}", invoiceNumber);
-
-  // Body:
-  std::string body = m_emailContentConfig->greeting + ",\n\n" +
-                     m_emailContentConfig->body + "\n\n" +
-                     m_emailContentConfig->signature;
-  checkAndReplacePlaceholder(body, "{invoice_number}", invoiceNumber);
-
-  // CC (only added if the sendToSelf flag is set to true):
-  std::vector<MessageAddress> ccRecipients;
-  if (m_emailContentConfig->sendToSelf)
+  // Check if the file is opened successfully:
+  if (!emailFile.is_open())
   {
-    ccRecipients.push_back(MessageAddress(m_emailServerConfig->email));
+    std::cerr << "Failed to open the email content file: " << filePath << std::endl;
+    return false;
   }
 
-  // Attachments (only added if the attachment file name is NOT empty):
+  // Create a stringstream to hold the file content
+  std::stringstream buffer;
+
+  // Read the file content into the buffer:
+  buffer << emailFile.rdbuf();
+
+  // Close the file:
+  emailFile.close();
+
+  // Assign the buffer content to the input string:
+  p_inputStr = buffer.str();
+
+  return true;
+}
+
+void EmailHandler::replacePlaceholders(std::string &p_textInput,
+                                       const std::unordered_map<std::string, std::string> &p_replacements) const
+{
+  for (const auto &replacement : p_replacements)
+  {
+    std::string replacementKey = "{" + replacement.first + "}";
+    size_t index = 0;
+    while ((index = p_textInput.find(replacementKey, index)) != std::string::npos)
+    {
+      p_textInput.replace(index, replacementKey.size(), replacement.second);
+      index += replacement.second.size();
+    }
+  }
+}
+
+PlaintextMessage EmailHandler::constructEmailMessage(const std::string &p_recipient, const std::string &p_attachmentFileName) const
+{
+  // 1. Sender email address:
+  MessageAddress senderEmailAddress(m_emailCredentials->username);
+
+  // 2. Vector of recipients:
+  std::vector<MessageAddress> recipients = {MessageAddress(p_recipient)};
+
+  // SIDE QUEST: Invoice number is extracted from the attachment file name:
+  std::string invoiceNumber = extractInvoiceNumber(p_attachmentFileName);
+
+  // 3. Subject:
+  std::string subject = m_programConfig->newInvoiceSubject;
+
+  // Replace placeholders in the subject:
+  const std::unordered_map<std::string, std::string> replacements = {
+      {Constants::TextFilePlaceholders::INVOICE_NR, invoiceNumber},
+      {Constants::TextFilePlaceholders::COMPANY_NAME, m_programConfig->companyName},
+      {Constants::TextFilePlaceholders::COMPANY_EMAIL, m_programConfig->companyEmail},
+      {Constants::TextFilePlaceholders::COMPANY_PHONE, m_programConfig->companyPhone}};
+  replacePlaceholders(subject, replacements);
+
+  // 4. Body:
+  std::string body = "";
+  readEmailContent(NEW_INVOICE, body);
+
+  // Replace placeholders in the body:
+  replacePlaceholders(body, replacements);
+
+  // 5. CC (only added if the sendToSelf flag is set to true):
+  std::vector<MessageAddress> ccRecipients;
+  if (m_programConfig->sendToSelf)
+  {
+    ccRecipients.push_back(MessageAddress(m_emailCredentials->username));
+  }
+
+  // 6. Attachments (only added if the attachment file name is NOT empty):
   std::vector<Attachment> attachments;
   if (p_attachmentFileName != "")
   {
-    std::string directory = m_emailServerConfig->invoicesDirectoryName + "/";
+    std::string directory = m_programConfig->invoicesDirectoryName + "/";
     attachments.push_back(Attachment(directory + p_attachmentFileName, p_attachmentFileName, p_attachmentFileName));
   }
 
-  // Create the email message:
+  // FINAL: Create the email message and return it:
   return PlaintextMessage(senderEmailAddress,
                           recipients,
                           subject,
@@ -66,19 +123,6 @@ bool EmailHandler::validEmailAddressFormat(const std::string &emailAddress) cons
   static const std::regex pattern(R"([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})");
 
   return std::regex_match(emailAddress, pattern);
-}
-
-void EmailHandler::checkAndReplacePlaceholder(std::string &p_input,
-                                              const std::string &placeholder,
-                                              const std::string &textInsteadOfPlaceholder) const
-{
-  // Check if the placeholder is present in the input string:
-  size_t placeHolderIndex = p_input.find(placeholder);
-  if (placeHolderIndex != std::string::npos)
-  {
-    // Replace the placeholder with the given text:
-    p_input.replace(placeHolderIndex, placeholder.size(), textInsteadOfPlaceholder);
-  }
 }
 
 std::string EmailHandler::extractInvoiceNumber(const std::string &p_attachmentFileName) const

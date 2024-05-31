@@ -5,8 +5,6 @@
 #include <wx/simplebook.h>
 #include <vector>
 
-#include "ProgramConfigurationHandler.h"
-
 /**
  * @class NotebookAdapter
  * @brief A custom adapter class for a wxNotebook control.

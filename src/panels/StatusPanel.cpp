@@ -124,19 +124,19 @@ void StatusPanel::handleSendEmails()
     //      call 'refreshInvoiceStatus()' so the color is changed as well.
 
     // 1. Read the email configuration file (can be nullptr if something went wrong):
-    EmailConfiguration *emailContentConfig = m_programConfigHandler.readEmailConfigFile();
+    EmailCredentials *emailCredentials = m_jsonParser.readEmailCredentialsConfig();
 
     // If 'emailConfig' is nullptr, then an error occurred while reading the email configuration file:
-    if (emailContentConfig == nullptr)
+    if (emailCredentials == nullptr)
     {
         // Display an error message:
-        ErrorFrame *errorFrame = new ErrorFrame(this, wxID_ANY, m_programConfigHandler.getErrorMessage());
+        ErrorFrame *errorFrame = new ErrorFrame(this, wxID_ANY, m_jsonParser.getErrorMessage());
         errorFrame->Show();
         return;
     }
 
     // Create an EmailHandler instance:
-    EmailHandler emailHandler(&m_programConfig, emailContentConfig);
+    EmailHandler emailHandler(&m_programConfig, emailCredentials);
 
     // 2. Get the list of invoice files:
     std::vector<std::pair<wxStaticText *, wxTextCtrl *>> invoiceLines = m_notebookAdapter->getInvoiceLines();

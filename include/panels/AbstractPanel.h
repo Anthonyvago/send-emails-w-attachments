@@ -3,7 +3,7 @@
 
 #include <wx/wx.h>
 
-#include "ProgramConfigurationHandler.h"
+#include "JsonParser.h"
 
 // AbstractPanel class definition
 class AbstractPanel : public wxPanel

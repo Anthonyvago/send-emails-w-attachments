@@ -1,22 +1,21 @@
-#include "ProgramConfigurationHandler.h"
+#include "JsonParser.h"
 
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <fstream>
 #include "Constants.h"
 
-ProgramConfigurationHandler::ProgramConfigurationHandler()
+JsonParser::JsonParser() : m_errorMessage("")
 {
-    
 }
 
-ProgramConfiguration *ProgramConfigurationHandler::readProjectConfigFile()
+ProgramConfiguration *JsonParser::readProjectConfigFile()
 {
     // Open the JSON file:
     std::ifstream jsonStream(Constants::Configuration::PROJECT_CONFIG_FILE_PATH);
     if (!jsonStream.is_open())
     {
-        std::string errorHeading = "Failed to open the login credentials configuration file: ";
+        std::string errorHeading = "Failed to open the program config file:";
         std::cout << Constants::OutputStd::RED << errorHeading << Constants::OutputStd::RESET << std::endl;
         m_errorMessage = errorHeading;
         return nullptr;
@@ -31,7 +30,7 @@ ProgramConfiguration *ProgramConfigurationHandler::readProjectConfigFile()
     }
     catch (const nlohmann::json::parse_error &e)
     {
-        std::string errorHeading = "Failed to parse the login credentials configuration file: ";
+        std::string errorHeading = "Failed to parse the program config file:";
         std::cout << Constants::OutputStd::RED << errorHeading << Constants::OutputStd::RESET << std::endl
                   << e.what() << std::endl;
         m_errorMessage = errorHeading + "\n" + e.what();
@@ -42,16 +41,19 @@ ProgramConfiguration *ProgramConfigurationHandler::readProjectConfigFile()
     try
     {
 
-        m_programConfig.invoicesDirectoryName = json.at("invoices_directory_name").get<std::string>();
-        m_programConfig.smtpServer = json.at("smtp-server").get<std::string>();
-        m_programConfig.port = json.at("port").get<uint16_t>();
-        m_programConfig.email = json.at("emailaddress").get<std::string>();
-        m_programConfig.password = json.at("password").get<std::string>();
+        m_programConfig.companyName = json.at(Constants::JsonKeys::COMPANY_NAME).get<std::string>();
+        m_programConfig.companyEmail = json.at(Constants::JsonKeys::COMPANY_EMAIL).get<std::string>();
+        m_programConfig.companyPhone = json.at(Constants::JsonKeys::COMPANY_PHONE).get<std::string>();
+        m_programConfig.invoicesDirectoryName = json.at(Constants::JsonKeys::INVOICES_DIR_PATH).get<std::string>();
+        m_programConfig.invoicesFileExtension = json.at(Constants::JsonKeys::INVOICE_FILE_EXT).get<std::string>();
+        m_programConfig.sendToSelf = json.at(Constants::JsonKeys::SEND_TO_SELF).get<bool>();
+        m_programConfig.newInvoiceSubject = json.at(Constants::JsonKeys::NEW_INVOICE_SUBJECT).get<std::string>();
+        m_programConfig.reminderSubject = json.at(Constants::JsonKeys::REMINDER_SUBJECT).get<std::string>();
         return &m_programConfig;
     }
     catch (nlohmann::json::exception &e)
     {
-        std::string errorHeading = "Failed to extract data from the configuration file for the login credentials: ";
+        std::string errorHeading = "Failed to extract data from the program config file:";
         std::cout << Constants::OutputStd::RED << errorHeading << Constants::OutputStd::RESET << std::endl
                   << e.what() << std::endl;
         m_errorMessage = errorHeading + "\n" + e.what();
@@ -62,13 +64,13 @@ ProgramConfiguration *ProgramConfigurationHandler::readProjectConfigFile()
     return nullptr;
 }
 
-EmailConfiguration* ProgramConfigurationHandler::readEmailConfigFile()
+EmailCredentials* JsonParser::readEmailCredentialsConfig()
 {
     // Open the JSON file:
-    std::ifstream jsonStream(Constants::Configuration::EMAIL_CONFIG_FILE_PATH);
+    std::ifstream jsonStream(Constants::Configuration::SMTP_CONFIG_FILE_PATH);
     if (!jsonStream.is_open())
     {
-        std::string errorHeading = "Failed to open the email content configuration file: ";
+        std::string errorHeading = "Failed to open the email credentials config file:";
         std::cout << Constants::OutputStd::RED << errorHeading << Constants::OutputStd::RESET << std::endl;
         m_errorMessage = errorHeading;
         return nullptr;
@@ -83,7 +85,7 @@ EmailConfiguration* ProgramConfigurationHandler::readEmailConfigFile()
     }
     catch (const nlohmann::json::parse_error &e)
     {
-        std::string errorHeading = "Failed to parse the email content configuration file: ";
+        std::string errorHeading = "Failed to parse the email credentials config file:";
         std::cout << Constants::OutputStd::RED << errorHeading << Constants::OutputStd::RESET << std::endl
                   << e.what() << std::endl;
         m_errorMessage = errorHeading + "\n" + e.what();
@@ -94,11 +96,10 @@ EmailConfiguration* ProgramConfigurationHandler::readEmailConfigFile()
     try
     {
 
-        m_emailConfig.subject = json.at("subject").get<std::string>();
-        m_emailConfig.greeting = json.at("greeting").get<std::string>();
-        m_emailConfig.body = json.at("body").get<std::string>();
-        m_emailConfig.signature = json.at("signature").get<std::string>();
-        m_emailConfig.sendToSelf = json.at("send_to_myself").get<bool>();
+        m_emailConfig.smtpServer = json.at(Constants::JsonKeys::SMTP_SERVER).get<std::string>();
+        m_emailConfig.port = json.at(Constants::JsonKeys::PORT).get<uint16_t>();
+        m_emailConfig.username = json.at(Constants::JsonKeys::USERNAME).get<std::string>();
+        m_emailConfig.password = json.at(Constants::JsonKeys::PASSWORD).get<std::string>();
         return &m_emailConfig;
     }
     catch (nlohmann::json::exception &e)
@@ -114,7 +115,7 @@ EmailConfiguration* ProgramConfigurationHandler::readEmailConfigFile()
     return nullptr;
 }
 
-std::string ProgramConfigurationHandler::getErrorMessage() const
+std::string JsonParser::getErrorMessage() const
 {
     return m_errorMessage;
 }
